@@ -26,9 +26,25 @@ a = np.array([[1.,2.,3.],[4.,5.,6.]])
 pytwsm.test2(a)
 
 
+# 2D array REQUIRED or else will fail on get
+# Probably because of my double loop
+import pytwsm
+import numpy as np
+#a = np.array([[1.,2.,3.],[4.,5.,6.]])
+a = np.array([[1]])
+#pytwsm.set_wind_speed( np.array([[1.,2.],[3.,4.]]) )
+#pytwsm.set_wind_speed( np.array([[1.,2.,3.],[4.,5.,6.]]) )
+pytwsm.set_wind_speed( np.array([[1,2,3],[4,5,6]]) )
+pytwsm.get_wind_speed()
 
+a = np.array([[1.,2.,3.],[4.,5.,6.]])
+pytwsm.set_wtd(a)
+pytwsm.set_wind_speed([[5.,9.,11.],[1.,521.,3.]])
+out = pytwsm.get_wtd()
+print(out)
+print(pytwsm.get_wind_speed())
 
-
+pytwsm.set_wind_speed([[1]])
 
 # scratch space
 
@@ -37,14 +53,14 @@ rd::Array2D<float> _set_return_array(rd::Array2D<float> arparray, \
     /**
     Private utility function to return a RichDEM 2D array object that is set
     to be the same as the input numpy array.
-    
-    This will be called by each relevant setter to assign each array's 
+
+    This will be called by each relevant setter to assign each array's
     dimensions and the values of its elements.
-    
+
     @arparray The ArrayPack array object
     @nparray The NumPy array being passed
     **/
-    
+
     // Default value for unassigned array elements
     float NO_VALUE  = std::numeric_limits<float>::min();
     // Instantiate an ArrayPack object to access those data
@@ -85,7 +101,7 @@ py::array_t<float> get_wtd(){
     ));
     // Pointer for looping over output array
     py::buffer_info nparray_info = nparray.request();
-    float *nparray_ptr = (float *) nparray_info.ptr; 
+    float *nparray_ptr = (float *) nparray_info.ptr;
     uint8_t counter = 0;
     for (uint32_t yi=0; yi<n_rows; yi++){
         for (uint32_t xi=0; xi<n_cols; xi++){
@@ -115,7 +131,7 @@ py::array_t<float> get_wtd(){
     ));
     // Pointer for looping over output array
     py::buffer_info nparray_info = nparray.request();
-    float *nparray_ptr = (float*) nparray_info.ptr; 
+    float *nparray_ptr = (float*) nparray_info.ptr;
     for (uint32_t yi=0; yi<n_rows; yi++){
         for (uint32_t xi=0; xi<n_cols; xi++){
             nparray_ptr[yi*n_cols + xi] = arp.wtd(xi, yi);
@@ -135,7 +151,7 @@ namespace py = py
         foo[i] = (float) i;
     }
     // So I just need to extract the data array from within the RichDEM object
-    
+
     py::array_t<float> nparray = py::array_t<float>(
         { n_rows, n_cols },  /* Number of elements for each dimension */
         { sizeof(float) * n_cols, sizeof(float) },  /* Strides for each dimension */
